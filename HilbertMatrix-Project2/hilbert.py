@@ -10,7 +10,7 @@ def buildHilbert(n):
     hilbert = np.zeros((n,n), dtype = np.float64)
     for i in range(n):
         for j in range(i, n):
-            hilbert[j, i] = hilbert[i, j] = 1/ (i + 1 + j + 1 - 1)
+            hilbert[j, i] = hilbert[i, j] = 1/ (i + 1 + j)
     return hilbert
 
 def explicitInverse(hilbert, n):
@@ -30,6 +30,23 @@ def binomialCoeff(n, r, fac = {}):
     nFact, rFact, nMinusRFact = factorial(n, fac), factorial(r, fac), factorial(n-r, fac)
     return nFact/(rFact * nMinusRFact)
 
+def getCondition(hilb, invHilb, n):
+    """
+        get condition number using the infinity norm of a hilbert
+    """
+    return getInfinityNorm(hilb, n) * getInfinityNorm(invHilb, n)
+            
+def getInfinityNorm(mat, n):
+    maxRow = np.float64("-inf")
+
+    for i in range(n):
+        curSum = 0
+        for j in range(n):
+            curSum += abs(mat[i, j])
+        if maxRow < curSum:
+            maxRow = curSum
+    return maxRow
+
 def factorial(x, fac):
     """
         computes x factorial
@@ -48,4 +65,5 @@ if __name__ == "__main__":
         sys.exit(1)
     n = int(sys.argv[1])
     hilbert = buildHilbert(n)
-    invHilb = explicitInverse(n)
+    invHilb = explicitInverse(hilbert, n)
+    print("Condition number with infinity norm:", getCondition(hilbert, invHilb, n))
