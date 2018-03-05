@@ -14,10 +14,11 @@ def buildHilbert(n):
             hilbert[j, i] = hilbert[i, j] = 1/ (i + 1 + j)
     return hilbert
 
-def explicitInverse(hilbert, n):
+def explicitInverse(hilbert):
     """
         Calculate the inverse of a hilbert matrix using the explicit equation
     """
+    n = len(hilbert)
     hilbInv = np.array(hilbert)
 
     for i in range(n):
@@ -65,20 +66,19 @@ def factorial(x, fac):
     fac[x] = x * factorial(x - 1, fac)
     return fac[x]
 
-def choleski(A, n):
+def choleski(A):
+    n = len(A)
     l = np.zeros((n, n), dtype=np.float64)
     
-    #this is unneeded for a hilbert matrix
     l[0, 0] = np.sqrt(A[0, 0])
-    #as is this
     for j in range(1, n):
         l[j, 0] = A[j, 0] / l[0,0]
 
 
     for i in range (1, n-1):
         sub = 0
-        for k in range(i - 1):
-            sub += (A[i, k] ** 2)
+        for k in range(i-1 ):
+            sub += (l[i, k] ** 2)
         l[i, i] = np.sqrt(A[i, i] - sub)
         
         for j in range(i+1, n):
@@ -105,6 +105,27 @@ def chol(a):
         a[0:k, k] = 0.0
     return a
 
+def cholSolveSystem(L, b):
+    n = len(b)
+  # Solution of [L]{y} = {b}
+    for k in range(n):
+        b[k] = (b[k] - np.dot(L[k,0:k],b[0:k]))/L[k,k]
+  # Solution of [L_transpose]{x} = {y}
+    for k in range(n-1,-1,-1):
+        b[k] = (b[k] - np.dot(L[k+1:n,k],b[k+1:n]))/L[k,k]
+    return b
+
+def qrSolveSystem(q, r, b):
+    n = len(b)
+    #forward subst
+    for k in range(n):
+        b[k] = (b[k] - np.dot(q[k, 0:k], b[0:k])) / q[k,k]
+
+    for k in range(n-1, -1, -1):
+        b[k] = (b[k] - np.dot(r[k+1:n,k], b[k+1:n])) / r[k,k]
+
+    return b
+
 def printMat(A):
     n = len(A)
     for i in range(n):
@@ -112,13 +133,40 @@ def printMat(A):
             print(A[i, j], end=" ")
         print("\n")
 
+def CompareMethods(hilbert):
+    n = len(hilbert)
+    invHilb = explicitInverse(hilbert)
+    apprInv = np.zeros((n,n), dtype=np.float64)
+
+    print("H inverse using equation 3:")
+    printMat(invHilb)
+    print("Condition number with infinity norm:", getCondition(hilbert, invHilb, n))
+
+    #Using LL^T
+    L = np.transpose(chol(np.array(hilbert)))
+    for i in range(n):
+        e = np.zeros(n)
+        e[i] = 1
+        apprInv[:, i] = cholSolveSystem(L, e)
+
+    print("H inverse using LLT:")
+    printMat(apprInv)
+
+    print("Infinity norm using choleski:", getInfinityNorm(invHilb-apprInv, n))
+
+    #Using QR
+    q, r = np.linalg.qr(hilbert)
+    for i in range(n):
+        e = np.zeros(n)
+        e[i] = 1
+        apprInv[:, i] = qrSolveSystem(q, r, e)
+    print("H inverse using QR:")
+    printMat(apprInv)
+    print("Infinity norm using QR:", getInfinityNorm(invHilb-apprInv, n))
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: ./conditionNumber.py hilbertDimensions")
         sys.exit(1)
-    n = int(sys.argv[1])
-    hilbert = buildHilbert(n)
-    invHilb = explicitInverse(hilbert, n)
-    print("Condition number with infinity norm:", getCondition(hilbert, invHilb, n))
-    q, r = np.linalg.qr(hilbert)
-    ch = chol(np.array(hilbert))
+    CompareMethods(buildHilbert(int(sys.argv[1])))
