@@ -1,5 +1,14 @@
 #!/usr/local/bin/python3
 
+#Kirolos Shahat
+#Math 472
+#Project 2 -- Hilbert Matrix
+#Due Date: March 8th, 2018
+#    -Computing the inverse hilbert matrix for an 8x8 hilbert matrix
+#        using direct, Choleski, and QR factorization and solving systems
+#        to do so.
+
+
 import sys
 import numpy as np
 from math import sqrt
@@ -66,28 +75,6 @@ def factorial(x, fac):
     fac[x] = x * factorial(x - 1, fac)
     return fac[x]
 
-#def choleski(A):
-#    n = len(A)
-#    l = np.zeros((n, n), dtype=np.float64)
-#    l[0, 0] = np.sqrt(A[0, 0])
-#    for j in range(1, n):
-#        l[j, 0] = A[j, 0] / l[0,0]
-#    for i in range (1, n-1):
-#        sub = 0
-#        for k in range(i-1 ):
-#            sub += (l[i, k] ** 2)
-#        l[i, i] = np.sqrt(A[i, i] - sub)
-#        for j in range(i+1, n):
-#            sub = 0
-#            for k in range(i-1):
-#                sub += (l[j, k] / l[i, k])
-#            l[j, i] = (A[j, i] - sub) / l[i, i]
-#    sub = 0
-#    for k in range(n-1):
-#        sub += (l[n-1, k] ** 2)
-#    l[n-1, n-1] = np.sqrt(A[n-1, n-1] - sub)
-#    return l
-
 def chol(a):
     """
         Choleski factorization of a = LL^T
@@ -126,16 +113,6 @@ def cholSolve(L, b):
         b[i] = (b[i] - s) / L[i][i]
     return b
 
-#def cholSolveSystem(L, b):
-#    n = len(b)
-#  # Solution of [L]{y} = {b}
-#    for k in range(n):
-#        b[k] = (b[k] - np.dot(L[k,0:k],b[0:k]))/L[k,k]
-#  # Solution of [L_transpose]{x} = {y}
-#    for k in range(n-1,-1,-1):
-#        b[k] = (b[k] - np.dot(L[k+1:n,k],b[k+1:n]))/L[k,k]
-#    return b
-
 def qrSolveSystem(q, r, b):
     """
         Solves a system Ax = QRx = b
@@ -155,6 +132,7 @@ def qrSolveSystem(q, r, b):
 def printMat(A):
     """
         Prints A in readable format
+        Note: Done mostly for testing purposes
     """
     n = len(A)
     for i in range(n):
