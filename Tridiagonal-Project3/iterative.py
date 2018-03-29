@@ -2,18 +2,23 @@
 
 import sys
 import numpy as np
+from math import exp, log
 
-def jacobi(A, n, b, x, xReal, eps):
-		k = 0
-		x2 = np.ones(n, dtype=np.float64)
+def jacobi(n, b, x, xReal, eps):
+		k, x2 = 0, np.zeros(n, dtype=np.float64)
 		while True:
-				for i in range(n):
-						pass	
+				x2[0] = 1/2*(x[1] + b[0])
+				for i in range(1, n-1):
+						x2[i] = 1/2*(x[i-1] + x[i+1] + b[i])
+				x2[n-1] = 1/2*(x[n-2] + b[n-1])
 				k += 1
-				if infinityNorm(x2 - x) < eps:
-						print("here")
-						break
-		return
+				x = x2
+				infNorm = infinityNorm(x-xReal)
+				if infNorm <= eps:
+						print("\tJacobi:")
+						print("\t\tK:", k)
+						print("\t\tSpectral Radius:", exp(1/k * log(infNorm/ infinityNorm(xReal), 2)))
+						return
 
 def gaussSeidel(A, n, b, x, eps):
 		return
@@ -29,11 +34,11 @@ def infinityNorm(x):
 		return maxVal
 
 if __name__ == "__main__":
-		A = np.array([-1, 2, -1], dtype=np.float64)
 		nList = [25, 50, 100, 200]
 		wList = [1.78486, 1.88402, 1.93968, 1.96922]
-		eps = 10**(-6)
+		eps = 10e-6
 		for n, w in zip(nList, wList):
+				print("n =", n)
 				h = 1/(n + 1)
 				x0 = np.zeros(n, dtype=np.float64)
 				xReal = np.zeros(n, dtype=np.float64)
@@ -43,4 +48,5 @@ if __name__ == "__main__":
 				for i in range(0, n):
 						xReal[i] = (i+1)*h * (1. - (i+1) *h)
 						b[i] = 2* (h**2)
-				jacobi(A, n, b, x0, xReal, eps)
+				jacobi(n, b, x0, xReal, eps)
+				break
