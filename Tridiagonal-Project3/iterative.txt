@@ -1,0 +1,40 @@
+n = 25
+	Jacobi:
+		K: 1703
+		Spectral Radius: 0.9927272548106373
+	Gauss-Seidel:
+		K: 852
+		Spectral Radius: 0.9855126072689201
+	SOR:
+		K: 66
+		Spectral Radius: 0.8268177602970747
+n = 50
+	Jacobi:
+		K: 6564
+		Spectral Radius: 0.9981081119107658
+	Gauss-Seidel:
+		K: 3283
+		Spectral Radius: 0.9962204433702082
+	SOR:
+		K: 129
+		Spectral Radius: 0.9079030060917842
+n = 100
+	Jacobi:
+		K: 25754
+		Spectral Radius: 0.9995175057186241
+	Gauss-Seidel:
+		K: 12878
+		Spectral Radius: 0.9990352859652755
+	SOR:
+		K: 255
+		Spectral Radius: 0.9524232913463014
+n = 200
+	Jacobi:
+		K: 102012
+		Spectral Radius: 0.9998781660861321
+	Gauss-Seidel:
+		K: 51007
+		Spectral Radius: 0.9997563496775556
+	SOR:
+		K: 508
+		Spectral Radius: 0.9758198876906158
