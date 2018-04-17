@@ -1,5 +1,11 @@
 #!/usr/local/bin/python3
 
+# Author: Kirolos Shahat
+# Due Date: 4/19/17
+# Course: Math 472
+# Description: Comparison of Stabilized Power Method vs. Raleigh Quotient Iterations
+#								To Approximate Eigenvalues and Vectors
+
 from sys import exit
 import numpy as np
 
@@ -33,10 +39,10 @@ def RQ_Iteration(A, q, eps=1e-5):
 				mu = raleighQuotient(A, q)
 				sig = infNorm(np.matmul(A,q))
 				B = np.array(mu * np.identity(3) - A)
-				q = np.matmul(np.linalg.inv(B), np.array(q)/sig) 
+				q = np.matmul(np.linalg.inv(B), np.array(q))/sig
 				rq = raleighQuotient(A,q)
 				if abs(rq - mu) <= eps:
-						return it, rq, q
+						return it, rq, q/np.linalg.norm(q, 2)
 		
 def main():
 		A = np.array([[-149, -50, -154], [537, 180, 546], [-27, -9, -25]])
